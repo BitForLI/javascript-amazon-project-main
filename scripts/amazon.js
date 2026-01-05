@@ -1,4 +1,7 @@
+import {cart as mycart, addToCart} from '../data/cart.js'
+import {products} from '../data/products.js';
 
+const cart = [];
 
 let productsHTML = '';
 
@@ -55,6 +58,16 @@ products.forEach((product) => {
 });
 
 
+
+function updateCartQuantity() {
+    let cartQuantity = 0;
+    cart.forEach((item) => {
+      cartQuantity += item.quantity;
+    });
+
+    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+}
+
  //在js中找到products-grid这个class，并把上面生成的HTML代码放进去
  document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
@@ -64,27 +77,11 @@ products.forEach((product) => {
 
     //找到按钮对应的商品
     const product = products.find((p) => p.id === button.dataset.productId);
+    addToCart(product);
+    updateCartQuantity();
 
-    //在购物车中查找该商品（只做一次查找）
-    const cartItem = cart.find(item => item.id === product.id);
-    if (cartItem) {
-      cartItem.quantity += 1;
-    } else {
-      cart.push({
-        id: product.id,
-        name: product.name,
-        priceCents: product.priceCents,
-        quantity: 1,
-      });
-    }
+    
 
-    let cartQuantity = 0;
-    cart.forEach((item) => {
-      cartQuantity += item.quantity;
-    });
 
-    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
-
-    console.log(cartQuantity);
   });
  });
