@@ -1,34 +1,4 @@
-const products = [
-  {
-    id: "1",
-    image:'images/products/athletic-cotton-socks-6-pairs.jpg',
-    name: "Black and Gray Athletic Cotton Socks - 6 Pairs",
-    rating: {
-      stars: 4.5,
-      count: 87
-    },
-    priceCents: 1090
-  },
-  {
-    id: "2",
-    image: 'images/products/intermediate-composite-basketball.jpg',
-    name: "Intermediate Size Basketball",
-    rating: {
-      stars: 4.0,
-      count: 127
-    },
-    priceCents: 2095
-  },
-  {
-    id: "3",
-    image:'images/products/adults-plain-cotton-tshirt-2-pack-teal.jpg',
-    name: "Adults Plain Cotton T-Shirt - 2 Pack",
-    rating: {
-      stars: 4.5,
-      count: 56
-    },
-    priceCents: 799
-  }];
+
 
 let productsHTML = '';
 
@@ -76,13 +46,45 @@ products.forEach((product) => {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary">
-            Add to Cart
+          <button class="add-to-cart-button button-primary js-add-to-cart" 
+          data-product-id="${product.id}">
+            Add to Cart 
           </button>
         </div>`;
 
 });
 
- console.log(productsHTML);
 
+ //在js中找到products-grid这个class，并把上面生成的HTML代码放进去
  document.querySelector('.js-products-grid').innerHTML = productsHTML;
+
+ //为所有“添加到购物车”按钮添加点击事件监听器
+ document.querySelectorAll('.js-add-to-cart').forEach((button)=> {
+  button.addEventListener('click',()=> {
+
+    //找到按钮对应的商品
+    const product = products.find((p) => p.id === button.dataset.productId);
+
+    //在购物车中查找该商品（只做一次查找）
+    const cartItem = cart.find(item => item.id === product.id);
+    if (cartItem) {
+      cartItem.quantity += 1;
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name,
+        priceCents: product.priceCents,
+        quantity: 1,
+      });
+    }
+
+    let cartQuantity = 0;
+    cart.forEach((item) => {
+      cartQuantity += item.quantity;
+    });
+
+    document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+
+    console.log(cartQuantity);
+  });
+ });
