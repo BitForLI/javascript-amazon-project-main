@@ -26,3 +26,11 @@ export function addToCart(product) {
       });
     }
 }
+
+export function removeFromCart(productId) {
+    const itemIndex = cart.findIndex(item => item.id === productId);  
+    if (itemIndex !== -1) {
+      // 从购物车中移除该商品
+        cart.splice(itemIndex, 1);
+    }
+}
