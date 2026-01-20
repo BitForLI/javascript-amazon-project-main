@@ -104,6 +104,7 @@ export function renderOrderSummary() {
 
   document.querySelector('.js-order-summary').innerHTML = cartSummaryHtml;
 
+
   document.querySelectorAll('.js-delete-item').forEach((deleteItem) => {
     deleteItem.addEventListener('click', () => {
       const productId = deleteItem.dataset.productId;
