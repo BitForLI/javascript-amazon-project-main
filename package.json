@@ -1,0 +1,21 @@
+{
+  "name": "javascript-amazon-project",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "extensionsToTreatAsEsm": [
+      ".js"
+    ],
+    "transform": {},
+    "moduleNameMapper": {
+      "^https://unpkg.com/dayjs@1.11.0/esm/index.js$": "<rootDir>/test-helpers/dayjs.js"
+    }
+  }
+}

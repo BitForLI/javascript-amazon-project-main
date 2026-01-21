@@ -53,9 +53,6 @@ class Clothing extends Product {
 
 }
 
-const date = new Date();
-console.log (date.toLocaleTimeString())
-
 export const productsDefault = [
   { 
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -731,7 +728,6 @@ export async function loadProductsFetch() {
         : new Product(productDetails);
     });
     
-    console.log('Products loaded successfully');
   } catch (error) {
     console.error('Error loading products:', error);
   }

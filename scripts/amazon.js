@@ -1,6 +1,5 @@
-import {cart, addToCart} from '../data/cart.js'
+import {cart} from '../data/cart-class.js'
 import {products, loadProductsFetch} from '../data/products.js';
-import {formatCurrency} from './utils/money.js';
 
 async function renderProducts() {
   await loadProductsFetch();
@@ -30,7 +29,8 @@ async function renderProducts() {
           </div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class="js-quantity-selector"
+              data-product-id="${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -65,7 +65,7 @@ async function renderProducts() {
 
 function updateCartQuantity() {
     let cartQuantity = 0;
-    cart.forEach((item) => {
+    cart.cartItems.forEach((item) => {
       cartQuantity += item.quantity;
     });
 
@@ -81,11 +81,17 @@ function updateCartQuantity() {
 
     //找到按钮对应的商品
     const product = products.find((p) => p.id === button.dataset.productId);
-    addToCart(product);
+    const quantitySelector = document.querySelector(
+      `.js-quantity-selector[data-product-id="${product.id}"]`
+    );
+    const quantity = Number(quantitySelector?.value) || 1;
+    cart.addToCart(product, quantity);
     updateCartQuantity();
 
   });
  });
+
+ updateCartQuantity();
 }
 
 renderProducts();

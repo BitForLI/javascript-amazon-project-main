@@ -1,30 +1,24 @@
 import {cart} from '../../data/cart-class.js';
 import {getProduct} from '../../data/products.js';
-import {products} from '../../data/products.js';
 import {formatCurrency} from '../utils/money.js';
 import dayjs from 'https://unpkg.com/dayjs@1.11.0/esm/index.js';
 import {deliveryOptions, getDeliveryOption} from '../../data/deliveryoptions.js';
 import { renderPaymentSummary } from './paymentSummary.js';
 
 const today = dayjs();
-const deliveryDate = today.add(5, 'day').format('dddd, MMMM D'); 
-
 export function renderOrderSummary() {
 
   let cartSummaryHtml = '';
 
   cart.cartItems.forEach((cartItem) => {
-
     const product = getProduct(cartItem.id);
-
     if (!product) {
-    return; 
-  }
+      return; 
+    }
 
-    deliveryOptions.forEach((option) => {
-      if (option.id === cartItem.deliveryOptionId) {
-        const optionDeliveryDate = today.add(
-          option.deliveryDate, 'days').format('dddd, MMMM D');
+    const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId);
+    const optionDeliveryDate = today.add(
+      deliveryOption.deliveryDate, 'days').format('dddd, MMMM D');
     
     cartSummaryHtml +=
     `
@@ -67,9 +61,7 @@ export function renderOrderSummary() {
         </div>
       </div>
     `;
-      }
-    });
-        });
+  });
 
   function deliveryOptionsHTML(product, cartItem) {
     let html = '';
@@ -78,7 +70,7 @@ export function renderOrderSummary() {
       const optionDeliveryDate = today.add(
         option.deliveryDate, 'days').format('dddd, MMMM D');
 
-      const optionPrice = option.priceCents === 0 ? 'FREE Shipping' 
+      const optionPrice = option.priceCents === 0 ? 'FREE' 
       : `$${formatCurrency(option.priceCents)}`;
         
       const isChecked = 

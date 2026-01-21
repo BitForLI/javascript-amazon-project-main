@@ -36,21 +36,35 @@ class Cart {
   // --- 新增的异步加载方法 ---
   async loadCartFetch() {
     const response = await fetch('https://supersimplebackend.dev/cart');
-    const text = await response.text();
-    console.log('购物车异步加载成功:', text);
-    return text;
+    let cartData = null;
+
+    try {
+      cartData = await response.json();
+    } catch (error) {
+      return;
+    }
+
+    if (Array.isArray(cartData)) {
+      this.cartItems = cartData.map((item) => ({
+        id: item.id || item.productId,
+        quantity: item.quantity ?? 1,
+        deliveryOptionId: item.deliveryOptionId || '1'
+      })).filter((item) => item.id);
+
+      this.saveToStorage();
+    }
   }
 
-  addToCart(product) {
+  addToCart(product, quantity = 1) {
     const item = this.cartItems.find(item => item.id === product.id);
     if (item) {
-      item.quantity += 1;
+      item.quantity += quantity;
     } else {
       this.cartItems.push({
         id: product.id,
         name: product.name,
         priceCents: product.priceCents,
-        quantity: 1,
+        quantity,
         deliveryOptionId: '1'
       });
     }
@@ -76,6 +90,3 @@ class Cart {
 
 // 修改这里：使用 export 导出实例，供 checkout.js 使用
 export const cart = new Cart('cart-OOP');
-export const businessCart = new Cart('cart-business');
-
-console.log(cart);
