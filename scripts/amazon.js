@@ -1,10 +1,13 @@
 import {cart, addToCart} from '../data/cart.js'
-import {products, loadProducts} from '../data/products.js';
+import {products, loadProductsFetch} from '../data/products.js';
 import {formatCurrency} from './utils/money.js';
 
-let productsHTML = '';
+async function renderProducts() {
+  await loadProductsFetch();
 
-products.forEach((product) => {
+  let productsHTML = '';
+
+  products.forEach((product) => {
   productsHTML = productsHTML + `
     <div class="product-container">
 
@@ -83,3 +86,6 @@ function updateCartQuantity() {
 
   });
  });
+}
+
+renderProducts();

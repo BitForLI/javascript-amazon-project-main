@@ -1,99 +1,81 @@
 class Cart {
-  cartItem;
+  cartItems; // 统一为复数
   #localStorageKey;
 
-  constructor(localStorageKey){
-
+  constructor(localStorageKey) {
     this.#localStorageKey = localStorageKey;
     this.loadFromStorage();
-
   }
 
   loadFromStorage() {
+    this.cartItems = JSON.parse(localStorage.getItem(this.#localStorageKey)) || [];
 
-    this.cartItem = JSON.parse(localStorage.getItem(this.#localStorageKey));
-
-    if(!this.cartItem|| this.cartItem.length === 0){
-      this.cartItem = [ 
-    {
-    id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
-    name: "Black and Gray Athletic Cotton Socks - 6 Pairs",
-    priceCents: 1090,
-    quantity: 1,
-    deliveryOptionId: "1",
-},
-{
-    id: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
-    name: "Wireless Bluetooth Over-Ear Headphones with Mic",
-    priceCents: 2599,
-    quantity: 1,
-    deliveryOptionId: "2",
-}];
-}
+    if (this.cartItems.length === 0) {
+      this.cartItems = [{
+          id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
+          name: "Black and Gray Athletic Cotton Socks - 6 Pairs",
+          priceCents: 1090,
+          quantity: 1,
+          deliveryOptionId: "1",
+        },
+        {
+          id: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
+          name: "Wireless Bluetooth Over-Ear Headphones with Mic",
+          priceCents: 2599,
+          quantity: 1,
+          deliveryOptionId: "2",
+        }
+      ];
+    }
   }
 
-saveToStorage() {
-    localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItem));
-} 
+  saveToStorage() {
+    localStorage.setItem(this.#localStorageKey, JSON.stringify(this.cartItems));
+  }
 
-addToCart(product) {
+  // --- 新增的异步加载方法 ---
+  async loadCartFetch() {
+    const response = await fetch('https://supersimplebackend.dev/cart');
+    const text = await response.text();
+    console.log('购物车异步加载成功:', text);
+    return text;
+  }
 
-    //在购物车中查找该商品（只做一次查找）
-    const cartItem = this.cartItem.find(item => item.id === product.id);
-    if (cartItem) {
-      cartItem.quantity += 1;
+  addToCart(product) {
+    const item = this.cartItems.find(item => item.id === product.id);
+    if (item) {
+      item.quantity += 1;
     } else {
-      this.cartItem.push({
+      this.cartItems.push({
         id: product.id,
         name: product.name,
         priceCents: product.priceCents,
         quantity: 1,
-        deliveryOptionId: '1' // 默认配送选项ID 
+        deliveryOptionId: '1'
       });
     }
-
     this.saveToStorage();
-}
+  }
 
-removeFromCart(productId) {
-    const itemIndex = this.cartItem.findIndex(item => item.id === productId);  
+  removeFromCart(productId) {
+    const itemIndex = this.cartItems.findIndex(item => item.id === productId);
     if (itemIndex !== -1) {
-      // 从购物车中移除该商品
-        this.cartItem.splice(itemIndex, 1);
+      this.cartItems.splice(itemIndex, 1);
     }
     this.saveToStorage();
-}
+  }
 
-updateDeliveryOption(productId, deliveryOptionId) {
-    const cartItem = this.cartItem.find(item => item.id === productId);
-    if (cartItem) {
-      cartItem.deliveryOptionId = deliveryOptionId;
+  updateDeliveryOption(productId, deliveryOptionId) {
+    const item = this.cartItems.find(item => item.id === productId);
+    if (item) {
+      item.deliveryOptionId = deliveryOptionId;
     }
     this.saveToStorage();
+  }
 }
-};
 
-const cart = new Cart('cart-OOP');
-const businessCart = new Cart('cart-business');
+// 修改这里：使用 export 导出实例，供 checkout.js 使用
+export const cart = new Cart('cart-OOP');
+export const businessCart = new Cart('cart-business');
 
 console.log(cart);
-console.log(businessCart)
-
-console.log(businessCart instanceof Cart);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

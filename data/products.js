@@ -56,7 +56,7 @@ class Clothing extends Product {
 const date = new Date();
 console.log (date.toLocaleTimeString())
 
-export const products = [
+export const productsDefault = [
   { 
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
     image: "images/products/athletic-cotton-socks-6-pairs.jpg",
@@ -717,16 +717,22 @@ export const products = [
   }
 ].map((productDetails) => (new (productDetails.type === 'clothing' ? Clothing : Product)(productDetails)));
 
-export let products1 = [];
+export let products = productsDefault; // 建议统一变量名
 
-function loadProducts() {
-  const xhr = new XMLHttpRequest();
-
-  xhr.addEventListener('load',()=>{
-    products1 = JSON.parse(xhr.response);
-  })
-
-  xhr.open('GET','https://supersimplebackend.dev/products');
-
+export async function loadProductsFetch() {
+  try {
+    const response = await fetch('https://supersimplebackend.dev/products');
+    const productsData = await response.json();
+    
+    // 这里非常重要：将获取到的数据赋值给导出的 products 变量
+    products = productsData.map((productDetails) => {
+      return productDetails.type === 'clothing' 
+        ? new Clothing(productDetails) 
+        : new Product(productDetails);
+    });
+    
+    console.log('Products loaded successfully');
+  } catch (error) {
+    console.error('Error loading products:', error);
+  }
 }
-
