@@ -2,10 +2,12 @@ import {cart} from '../data/cart-class.js'
 import {products, loadProductsFetch} from '../data/products.js';
 
 async function renderProducts() {
+  //确保商品数据停在这里，等待数据全部加载完成
   await loadProductsFetch();
 
   let productsHTML = '';
 
+  //拼接商品的html代码
   products.forEach((product) => {
   productsHTML = productsHTML + `
     <div class="product-container">
@@ -62,7 +64,7 @@ async function renderProducts() {
 });
 
 
-
+//更新购物车数量
 function updateCartQuantity() {
     let cartQuantity = 0;
     cart.cartItems.forEach((item) => {
@@ -72,26 +74,29 @@ function updateCartQuantity() {
     document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 }
 
- //在js中找到products-grid这个class，并把上面生成的HTML代码放进去
+ //在js中找到products-grid这个class，并把上面生成的html代码放进去
  document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
  //为所有“添加到购物车”按钮添加点击事件监听器
  document.querySelectorAll('.js-add-to-cart').forEach((button)=> {
   button.addEventListener('click',()=> {
 
-    //找到按钮对应的商品
+    //找到对应的商品id
     const product = products.find((p) => p.id === button.dataset.productId);
     const quantitySelector = document.querySelector(
+      //找到对应的商品
       `.js-quantity-selector[data-product-id="${product.id}"]`
     );
+    //找到对应的商品数量
     const quantity = Number(quantitySelector?.value) || 1;
     cart.addToCart(product, quantity);
+    //更新购物车数量，只有点击时
     updateCartQuantity();
 
   });
  });
-
+//更新购物车数量，初始化
  updateCartQuantity();
 }
-
+//渲染商品
 renderProducts();
